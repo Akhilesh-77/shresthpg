@@ -1,6 +1,6 @@
 {
-  "name": "PG Management System",
-  "description": "Comprehensive PWA for hostel and building management with role-based access for admins and residents.",
+  "name": "Shresth Signature PG",
+  "description": "Premium Hostel & PG Management System with real-time tracking, payments, and WhatsApp integration.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

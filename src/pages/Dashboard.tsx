@@ -121,8 +121,8 @@ const Dashboard: React.FC = () => {
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-            <p className="text-gray-500">Welcome back, {profile.name}. Here's what's happening today.</p>
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight uppercase">Dashboard</h1>
+            <p className="text-gray-500 text-sm">Welcome back, {profile.name} • Shresth Signature PG</p>
           </div>
           <div className="flex items-center gap-2 text-sm font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-100">
             <TrendingUp className="w-4 h-4" />
@@ -135,6 +135,16 @@ const Dashboard: React.FC = () => {
           <StatCard icon={<DoorOpen />} label="Occupied Rooms" value={stats.occupiedRooms} color="green" />
           <StatCard icon={<DoorClosed />} label="Vacant Rooms" value={stats.vacantRooms} color="amber" />
           <StatCard icon={<AlertCircle />} label="Open Complaints" value={stats.openComplaints} color="red" />
+        </div>
+
+        <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Actions</h2>
+           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <QuickActionBtn label="Add Resident" onClick={() => navigate("/residents")} bg="bg-blue-600" />
+              <QuickActionBtn label="Generate Dues" onClick={() => navigate("/payments")} bg="bg-indigo-600" />
+              <QuickActionBtn label="Post Notice" onClick={() => navigate("/notices")} bg="bg-purple-600" />
+              <QuickActionBtn label="View Reports" onClick={() => navigate("/reports")} bg="bg-emerald-600" />
+           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -199,8 +209,16 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Resident Dashboard</h1>
-        <p className="text-gray-500">Welcome back, {profile?.name}.</p>
+        <h1 className="text-2xl md:text-3xl font-black tracking-tight uppercase">My Residency</h1>
+        <p className="text-gray-500 text-sm">Welcome back, {profile?.name} • Shresth Signature PG</p>
+      </div>
+
+      <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm">
+           <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Quick Actions</h2>
+           <div className="grid grid-cols-2 gap-3">
+              <QuickActionBtn label="Pay Rent" onClick={() => navigate("/payments")} bg="bg-blue-600" icon={<CreditCard className="w-5 h-5"/>} />
+              <QuickActionBtn label="Raise Issue" onClick={() => navigate("/complaints")} bg="bg-red-500" icon={<AlertCircle className="w-5 h-5"/>} />
+           </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -263,6 +281,16 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
+
+const QuickActionBtn: React.FC<{ label: string, onClick: () => void, bg: string, icon?: any }> = ({ label, onClick, bg, icon }) => (
+    <button 
+        onClick={onClick}
+        className={cn("p-6 rounded-3xl text-white flex flex-col items-center justify-center gap-2 transition-all active:scale-95 shadow-lg", bg)}
+    >
+        {icon && <div className="mb-1">{icon}</div>}
+        <span className="text-sm font-bold tracking-tight">{label}</span>
+    </button>
+);
 
 const StatCard: React.FC<{ icon: any, label: string, value: any, color: "blue" | "green" | "amber" | "red" }> = ({ icon, label, value, color }) => {
   const colors = {

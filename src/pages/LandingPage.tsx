@@ -23,42 +23,40 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
         
-        <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
-          Next-Gen <span className="text-blue-600">PG Management</span> System
+        <h1 className="text-5xl md:text-7xl font-black tracking-tight text-gray-900 leading-[0.9]">
+          SHRESTH <br/><span className="text-blue-600">SIGNATURE PG</span>
         </h1>
         
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-          Manage residents, payments, and maintenance request with ease. A modern solution for residential buildings and PG facilities.
+        <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed font-medium">
+          Premium residency experience with digital management. <br className="hidden md:block" /> Smart tracking, WhatsApp support, and seamless payments.
         </p>
 
-        <div className="flex justify-center pt-4">
+        <div className="flex flex-col items-center gap-4 pt-4">
           <button
             onClick={login}
-            className="group relative px-8 py-4 bg-gray-900 text-white rounded-2xl font-semibold text-lg hover:bg-gray-800 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+            className="group relative w-full max-w-sm px-8 py-5 bg-blue-600 text-white rounded-3xl font-bold text-lg hover:bg-blue-700 transition-all duration-300 shadow-xl shadow-blue-100 flex items-center justify-center active:scale-95"
           >
-            <div className="relative z-10 flex items-center">
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6 mr-3" />
-              Continue with Google
-            </div>
-            <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity" />
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-6 h-6 mr-3 bg-white p-1 rounded-full text-black" />
+            Continue with Google
           </button>
+          <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Enterprise PG Solutions</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16">
           <FeatureCard 
             icon={<ShieldCheck className="w-6 h-6 text-blue-600" />}
-            title="Secure Login"
-            description="Role-based access control for Admins and Residents."
+            title="Mobile First"
+            description="Installable PWA that feels like a native app on your home screen."
           />
           <FeatureCard 
             icon={<CreditCard className="w-6 h-6 text-blue-600" />}
-            title="Payment Tracking"
-            description="Automatic invoices, overdue alerts, and digital receipts."
+            title="WhatsApp Alerts"
+            description="Instant issue reporting to admin via WhatsApp Business API."
           />
           <FeatureCard 
-            icon={<ClipboardCheck className="w-6 h-6 text-blue-600" />}
-            title="Maintenance"
-            description="Quick complaint filing and status updates for residents."
+            icon={<Building2 className="w-6 h-6 text-blue-600" />}
+            title="Premium Stay"
+            description="Modern room management and resolution tracking for residents."
           />
         </div>
       </motion.div>

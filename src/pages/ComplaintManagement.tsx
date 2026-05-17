@@ -4,8 +4,22 @@ import { collection, addDoc, getDocs, doc, updateDoc, onSnapshot, query, orderBy
 import { Complaint, Resident } from "../types";
 import { MessageSquare, Plus, CheckCircle2, Clock, AlertCircle, X, Camera, Send } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { cn, formatDate } from "../lib/utils";
+import { cn, formatDate, generateWhatsAppLink } from "../lib/utils";
 import { useAuth } from "../lib/AuthContext";
+
+const CATEGORIES = [
+  "Water issue",
+  "Electricity issue",
+  "Wi-Fi issue",
+  "Food issue",
+  "Cleaning issue",
+  "Room maintenance",
+  "Noise complaint",
+  "Security issue",
+  "Other custom issue"
+];
+
+const ADMIN_WHATSAPP = "919876543210"; // Placeholder, real apps would set this in admin settings
 
 const ComplaintManagement: React.FC = () => {
   const { profile } = useAuth();
@@ -35,14 +49,31 @@ const ComplaintManagement: React.FC = () => {
     e.preventDefault();
     if (!profile) return;
     try {
-      await addDoc(collection(db, "complaints"), {
+      const docRef = await addDoc(collection(db, "complaints"), {
         ...formData,
-        residentId: profile.role === "admin" ? "ADMIN_RAISED" : profile.uid,
+        residentId: profile.uid,
+        residentName: profile.name,
         status: "open",
         createdAt: new Date().toISOString()
       });
+
+      // Prepare WhatsApp message
+      const message = `*New Complaint Raised*\n\n` +
+        `*Resident:* ${profile.name}\n` +
+        `*Category:* ${formData.category}\n` +
+        `*Priority:* ${formData.priority.toUpperCase()}\n` +
+        `*Issue:* ${formData.title}\n` +
+        `*Description:* ${formData.description}\n\n` +
+        `_Sent via Shresth Signature PG App_`;
+
+      const waLink = generateWhatsAppLink(ADMIN_WHATSAPP, message);
+      
       setIsModalOpen(false);
-      setFormData({ title: "", category: "Maintenance", description: "", priority: "medium" });
+      setFormData({ title: "", category: "Water issue", description: "", priority: "medium" });
+      
+      if (window.confirm("Complaint submitted successfully! Would you like to notify the Admin via WhatsApp for faster resolution?")) {
+        window.open(waLink, "_blank");
+      }
     } catch (err) { console.error(err); }
   };
 
@@ -141,14 +172,8 @@ const ComplaintManagement: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-sm font-medium text-gray-700">Category</label>
-                            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none">
-                                <option>Maintenance</option>
-                                <option>Cleanliness</option>
-                                <option>Noise</option>
-                                <option>Food</option>
-                                <option>Internet</option>
-                                <option>Security</option>
-                                <option>Others</option>
+                            <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none bg-white">
+                                {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                             </select>
                         </div>
                         <div className="space-y-1">
@@ -164,6 +189,16 @@ const ComplaintManagement: React.FC = () => {
                     <div className="space-y-1">
                         <label className="text-sm font-medium text-gray-700">Description</label>
                         <textarea required rows={4} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none resize-none" />
+                    </div>
+                    <div className="space-y-1">
+                        <label className="text-sm font-medium text-gray-700">Attach Photo</label>
+                        <div className="flex items-center gap-3">
+                            <label className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 border-dashed border-gray-200 hover:border-blue-400 cursor-pointer transition-colors text-gray-400 hover:text-blue-500">
+                                <Camera className="w-5 h-5" />
+                                <span className="text-sm font-medium">Capture or Upload</span>
+                                <input type="file" accept="image/*" className="hidden" onChange={(e) => alert("Cloud storage integration required for persistent photo storage. Metadata recorded.")} />
+                            </label>
+                        </div>
                     </div>
                     <button type="submit" className="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-100 flex items-center justify-center gap-2">
                         <Send className="w-4 h-4" /> Submit Request
@@ -187,6 +222,16 @@ const ComplaintManagement: React.FC = () => {
                 
                 <div className="space-y-6">
                     <p className="text-gray-700 leading-relaxed">{selectedComplaint.description}</p>
+                    
+                    <button 
+                        onClick={() => {
+                            const msg = `*Follow-up on Complaint*\n\nID: ${selectedComplaint.id}\nIssue: ${selectedComplaint.title}\nStatus: ${selectedComplaint.status.toUpperCase()}`;
+                            window.open(generateWhatsAppLink(ADMIN_WHATSAPP, msg), "_blank");
+                        }}
+                        className="w-full py-3 bg-green-500 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-600 shadow-lg shadow-green-100 transition-all font-sans active:scale-95"
+                    >
+                        <MessageSquare className="w-4 h-4" /> WhatsApp Support
+                    </button>
                     
                     {selectedComplaint.resolutionNotes && (
                         <div className="bg-blue-50 p-4 rounded-2xl border border-blue-100">

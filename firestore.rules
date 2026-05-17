@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- GLOBAL HELPERS ---
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == 'akhilesh27u@gmail.com'
+      );
+    }
+    function isOwner(userId) { return isSignedIn() && request.auth.uid == userId; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    // --- CATCH ALL DENY ---
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- ADMINS ---
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // --- FLOORS ---
+    match /floors/{floorId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // --- ROOMS ---
+    match /rooms/{roomId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // --- RESIDENTS ---
+    match /residents/{residentId} {
+      allow read: if isAdmin() || isOwner(residentId) || isOwner(existing().uid);
+      allow create: if isSignedIn() && (isAdmin() || isOwner(incoming().uid));
+      allow update: if isAdmin() || isOwner(existing().uid);
+      allow delete: if isAdmin();
+    }
+
+    // --- PAYMENTS ---
+    match /payments/{paymentId} {
+      allow read: if isAdmin() || isOwner(existing().residentId);
+      allow write: if isAdmin();
+    }
+
+    // --- COMPLAINTS ---
+    match /complaints/{complaintId} {
+      allow read: if isAdmin() || isOwner(existing().residentId);
+      allow create: if isSignedIn();
+      allow update: if isAdmin() || (isOwner(existing().residentId) && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'description', 'category', 'priority']));
+      allow delete: if isAdmin();
+    }
+
+    // --- NOTICES ---
+    match /notices/{noticeId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // --- FACILITIES ---
+    match /facilities/{facilityId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // --- AUDIT LOGS ---
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+    }
+  }
+}

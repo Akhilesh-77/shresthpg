@@ -1,0 +1,6 @@
+{
+  "name": "PG Management System",
+  "description": "Comprehensive PWA for hostel and building management with role-based access for admins and residents.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

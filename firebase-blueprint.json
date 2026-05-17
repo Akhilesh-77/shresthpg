@@ -1,0 +1,162 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "System administrator with full access",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["superadmin", "manager"] }
+      },
+      "required": ["uid", "email", "name"]
+    },
+    "Floor": {
+      "title": "Floor",
+      "description": "A floor in the building",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "number" },
+        "name": { "type": "string" },
+        "totalRooms": { "type": "number" },
+        "notes": { "type": "string" }
+      },
+      "required": ["number", "name"]
+    },
+    "Room": {
+      "title": "Room",
+      "description": "A room in the building",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "roomNumber": { "type": "string" },
+        "floorId": { "type": "string" },
+        "capacity": { "type": "number" },
+        "currentOccupancy": { "type": "number" },
+        "rent": { "type": "number" },
+        "deposit": { "type": "number" },
+        "type": { "type": "string", "enum": ["AC", "Non-AC"] },
+        "bathroom": { "type": "string", "enum": ["Attached", "Shared"] },
+        "furnished": { "type": "string", "enum": ["Furnished", "Semi-Furnished", "Unfurnished"] },
+        "status": { "type": "string", "enum": ["vacant", "occupied", "reserved", "maintenance"] }
+      },
+      "required": ["roomNumber", "floorId", "capacity", "rent"]
+    },
+    "Resident": {
+      "title": "Resident",
+      "description": "A resident staying in the PG",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "fullName": { "type": "string" },
+        "fatherName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "whatsapp": { "type": "string" },
+        "aadhaarNumber": { "type": "string" },
+        "panNumber": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "aadhaarUrl": { "type": "string" },
+        "joiningDate": { "type": "string" },
+        "joiningTime": { "type": "string" },
+        "floorId": { "type": "string" },
+        "roomId": { "type": "string" },
+        "rentAmount": { "type": "number" },
+        "depositAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "idVerificationStatus": { "type": "string", "enum": ["pending", "verified", "rejected"] }
+      },
+      "required": ["fullName", "email", "phone", "aadhaarNumber"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Rental or other payments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "residentId": { "type": "string" },
+        "month": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["paid", "pending", "overdue", "partial"] },
+        "dueDate": { "type": "string" },
+        "paymentDate": { "type": "string" },
+        "paymentMode": { "type": "string" },
+        "receiptUrl": { "type": "string" },
+        "invoiceNumber": { "type": "string" }
+      },
+      "required": ["residentId", "amount", "status", "dueDate"]
+    },
+    "Complaint": {
+      "title": "Complaint",
+      "description": "Maintenance requests or complaints",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "residentId": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
+        "status": { "type": "string", "enum": ["open", "in-progress", "resolved", "closed"] },
+        "photoUrl": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "resolvedAt": { "type": "string" },
+        "resolutionNotes": { "type": "string" }
+      },
+      "required": ["residentId", "title", "category", "description"]
+    },
+    "Notice": {
+      "title": "Notice",
+      "description": "Announcements for residents",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "priority": { "type": "string", "enum": ["normal", "urgent"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "message"]
+    },
+    "Facility": {
+      "title": "Facility",
+      "description": "Services offered by the PG",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "maintenance", "unavailable"] },
+        "charge": { "type": "number" }
+      },
+      "required": ["name", "status"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Log of admin actions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "adminId": { "type": "string" },
+        "action": { "type": "string" },
+        "entityType": { "type": "string" },
+        "entityId": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["adminId", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": { "schema": "Admin", "description": "Admin users" },
+    "/floors/{floorId}": { "schema": "Floor", "description": "Building floors" },
+    "/rooms/{roomId}": { "schema": "Room", "description": "Building rooms" },
+    "/residents/{residentId}": { "schema": "Resident", "description": "Resident users" },
+    "/payments/{paymentId}": { "schema": "Payment", "description": "Payment records" },
+    "/complaints/{complaintId}": { "schema": "Complaint", "description": "Maintenance complaints" },
+    "/notices/{noticeId}": { "schema": "Notice", "description": "Global notices" },
+    "/facilities/{facilityId}": { "schema": "Facility", "description": "PG facilities" },
+    "/auditLogs/{logId}": { "schema": "AuditLog", "description": "Audit trails" }
+  }
+}
